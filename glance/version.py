@@ -13,6 +13,31 @@
 #    under the License.
 
 
-import pbr.version
+GLANCE_VENDOR = "OpenStack Foundation"
+GLANCE_PRODUCT = "OpenStack Glance"
+GLANCE_PACKAGE = None  # OS distro package version suffix
 
-version_info = pbr.version.VersionInfo('glance')
+loaded = False
+
+
+class VersionInfo(object):
+    release = "REDHATGLANCERELEASE"
+    version = "REDHATGLANCEVERSION"
+
+    def version_string(self):
+        return self.version
+
+    def cached_version_string(self):
+        return self.version
+
+    def release_string(self):
+        return self.release
+
+    def canonical_version_string(self):
+        return self.version
+
+    def version_string_with_vcs(self):
+        return self.release
+
+
+version_info = VersionInfo()
