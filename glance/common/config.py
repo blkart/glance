@@ -145,6 +145,8 @@ common_opts = [
     cfg.StrOpt('metadata_encryption_key', secret=True,
                help=_('Key used for encrypting sensitive metadata while '
                       'talking to the registry or database.')),
+    cfg.BoolOpt('eayun_optimization_clone_image', default=False,
+                help=_("Clone image from volume snapshot.")),
 ]
 
 CONF = cfg.CONF

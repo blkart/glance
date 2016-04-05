@@ -85,3 +85,40 @@ class BaseController(object):
                 raise webob.exc.HTTPBadRequest(explanation=msg,
                                                request=req,
                                                content_type='text/plain')
+
+    def clone_image_from_volume_snapshot(self, image_id, location):
+        image_location = store.clone_image_from_volume_snapshot(location,
+                                                                 image_id)
+        return image_location
+
+    def url_is_ok(self, url):
+        prefix = 'rbd://'
+        if not url.startswith(prefix):
+            reason = _('URL must start with rbd://')
+            msg = _LI("Invalid URL: %s") % reason
+
+            LOG.info(msg)
+            return False
+        # convert to ascii since librbd doesn't handle unicode
+        try:
+            ascii_url = str(url)
+        except UnicodeError:
+            reason = _('URL contains non-ascii characters')
+            msg = _LI("Invalid URL: %s") % reason
+
+            LOG.info(msg)
+            return False
+        pieces = ascii_url[len(prefix):].split('/')
+        if len(pieces) != 4:
+            reason = _('URL must have exactly 4 components')
+            msg = _LI("Invalid URL: %s") % reason
+
+            LOG.info(msg)
+            return False
+        if any(map(lambda p: p == '', pieces)):
+            reason = _('URL cannot contain empty components')
+            msg = _LI("Invalid URL: %s") % reason
+
+            LOG.info(msg)
+            return False
+        return True

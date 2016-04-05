@@ -62,6 +62,7 @@ CONF.import_opt('disk_formats', 'glance.common.config', group='image_format')
 CONF.import_opt('container_formats', 'glance.common.config',
                 group='image_format')
 CONF.import_opt('image_property_quota', 'glance.common.config')
+CONF.import_opt('eayun_optimization_clone_image', 'glance.common.config')
 
 
 def validate_image_meta(req, values):
@@ -746,6 +747,10 @@ class Controller(controller.BaseController):
             self.pool.spawn_n(self._upload_and_activate, req, image_meta)
         else:
             if location:
+                if (CONF.eayun_optimization_clone_image and
+                    self.url_is_ok(location)):
+                    location = self.clone_image_from_volume_snapshot(image_id,
+                                                                     location)
                 self._validate_image_for_activation(req, image_id, image_meta)
                 image_size_meta = image_meta.get('size')
                 if image_size_meta:
